@@ -1,0 +1,356 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <string.h>
+
+//以下为链表声明
+typedef  struct school
+{
+    int number;//编号
+    char name[100];
+    char city[50];//所在地
+    struct school *right;
+}SCH;
+
+typedef struct major
+{
+    int schoolnumber;//学校编号
+    int number;//专业编号
+    char name[50];
+    int NumberOfPeople;//招生人数
+    int score;
+    struct school *up;
+    struct major *right;
+}MAJ;
+
+typedef struct student
+{
+    int number;
+    int MajorNumber;
+    char name[50];
+    char province[50];
+    int score;
+    struct major *up;
+    struct student *next;
+}STU;
+
+
+void CreateList();
+void MainMenu();
+void Print();
+void Search();
+void Insert();
+void Change();
+
+
+//头指针
+    SCH *head;
+    MAJ *mhead;
+    STU *shead;
+
+//尾指针
+    SCH *p2;
+    MAJ *pm2;
+    STU *ps2;
+
+//动态指针
+struct school *p1;
+struct major *pm1;
+struct student *ps1;
+
+int main()
+{
+    CreateList();
+
+    MainMenu();
+
+    return 0;
+
+}
+
+void MainMenu()
+{
+    system("CLS");
+    printf("请输入数字，进行操作\n1.打印信息\n2.搜索信息\n3.修改信息\n4.插入信息\n5.退出\n");
+    int choice;
+    scanf("%d", &choice);
+    switch(choice)
+    {
+        case 1:
+            Print();
+            break;
+        case 2:
+            Search();
+            break;
+        case 3:
+            Change();
+            break;
+        case 4:
+            Insert();
+            break;
+        case 5:break;
+    }
+}
+
+void Print()
+{
+    int code = 0;//作为选项
+
+    label2:
+    system("CLS");
+    p1 = head;
+    pm1 = mhead;
+    ps1 = shead;
+    printf("您想打印什么信息？\n");
+    printf("1.学校信息\n2.专业信息\n3.学生信息\n4.返回上一级\n\n");
+
+    scanf("%d", &code);
+    switch(code)
+    {
+        case 1:
+            {
+                printf("学校编号       学校名称       所在城市\n");
+                printf("--------------------------------------\n");
+                do{
+                    printf("%8d %14s %14s\n", p1->number, p1->name, p1->city);
+                    p1 = p1->right;
+            }while(p1 != p2);
+            system("PAUSE");
+            goto label2;
+            }
+        case 2:
+            {
+                do
+                {
+                    printf("%d %s %d %d\n", pm1->number, pm1->name, pm1->score, pm1->NumberOfPeople);
+                    pm1 = pm1->right;
+                }while(pm1 != pm2);
+                system("PAUSE");
+                goto label2;
+            }
+        case 3:
+            {
+                do
+                {
+                    printf("%d %s %s %d %s\n", ps1->number, ps1->name, ps1->province, ps1->score, ps1->up->name);
+                    ps1 = ps1->next;
+                }while(ps1 != ps2);
+                system("PAUSE");
+                goto label2;
+            }
+        case 4: MainMenu();
+
+    }
+}
+
+void Search()
+{
+    int code = 0;//作为选项
+
+
+    label1 :
+
+    system("CLS");
+    p1 = head;
+    pm1 = mhead;
+    ps1 = shead;
+
+    printf("您想搜索什么？\n1.按学校搜索\n2.按专业搜索\n3.按学生搜索\n4.返回上一级\n\n");
+    int choice;
+    scanf("%d", &choice);
+    switch(choice)
+    {
+        case 1:
+            {
+                printf("请输入学校代码。\n\n");
+                scanf("%d", &code);
+                do
+                {
+                    if(ps1->up->schoolnumber == code)
+                    {
+                        printf("%s %s %s\n", ps1->up->up->name, ps1->up->name, ps1->name);
+                    }
+                    ps1 = ps1->next;
+                }while(ps1 != ps2);
+                system("PAUSE");
+                goto label1;
+            }
+        case 2:
+            {
+                printf("请输入专业代码\n");
+                scanf("%d", &code);
+                do
+                {
+                    if(ps1->MajorNumber == code)
+                    {
+                        printf("%s %s\n", ps1->up->name, ps1->name);
+                    }
+                    ps1 = ps1->next;
+                } while(ps1 != ps2);
+                system("PAUSE");
+                goto label1;
+            }
+
+        case 3:
+            {
+                printf("请输入学生代码\n");
+                scanf("%d", &code);
+                do
+                {
+                    if(ps1->number == code)
+                    {
+                        printf("%s\n", ps1->name);
+                    }
+                    ps1 = ps1->next;
+                } while(ps1 != ps2);
+                system("PAUSE");
+                goto label1;
+            }
+        case 4:MainMenu();
+    }
+}
+
+void Change()
+{
+
+}
+
+void Insert()
+{
+
+}
+
+void CreateList()
+{
+    printf("读取数据中......\n");
+    system("PAUSE");
+    system("CLS");
+    head = (struct school*)malloc(sizeof(struct school));
+    mhead = (struct major*)malloc(sizeof(struct major));
+    shead = (struct student*)malloc(sizeof(struct student));
+
+    int i = 1, k = 1;
+
+    //以下，将文件中的数据写入链表
+
+    FILE *fpSchool, *fpMajor, *fpstudent;
+    fpSchool = fopen("F:\\code\\SchoolList.txt", "r+");
+    fpMajor = fopen("F:\\code\\MajorList.txt", "r+");
+    fpstudent = fopen("F:\\code\\StudentList.txt", "r+");
+
+
+
+SCH *p1;
+p1 = head;
+MAJ *pm1;
+pm1 = mhead;
+
+STU *ps1;
+ps1 = shead;
+
+    while ((fscanf(fpSchool, "%d %s %s", &(p1->number), p1->name, p1->city)) != EOF)
+    {
+
+        //printf("%.4d %15s %5s\n", p1->number, p1->name, p1->city);//输出测试
+
+        p1->number = i;
+
+        p1 -> right = (struct school*)malloc(sizeof(struct school));
+        p1 = p1 -> right;
+
+        i++;
+    }
+    p2 = p1;
+    p1 = head;//初始化
+
+    while((fscanf( fpMajor, "%d %s %d %d", &(pm1->schoolnumber), pm1->name, &(pm1->score), &(pm1->NumberOfPeople)))!= EOF)
+    {
+        //printf("%d %s\n", pm1->schoolnumber, pm1->name);
+        pm1->number = k;
+        k++;
+
+        pm1->right = (struct major*)malloc(sizeof(struct major));
+        pm1 = pm1->right;
+    }
+
+    pm2 = pm1;//pm2是尾节点
+    pm1 = mhead;
+
+    for(int j = 1; j < i; j++)
+    {
+        pm1 = mhead;
+        for(int m = 1; m < k; m++)
+        {
+            if(pm1->schoolnumber == p1->number)
+            {
+                pm1->up = p1;
+            }
+
+            pm1 = pm1->right;
+        }
+
+        p1 = p1->right;
+    }//将专业与学校链接
+
+    p1 = head;
+    pm1 = mhead;
+
+    //输出测试:成功
+
+    /*do
+    {
+        printf("%s %d %s\n", pm1->up->name, pm1->number, pm1->name);
+        pm1 = pm1->right;
+    }while(pm1 != pm2);
+    pm1 = mhead;*/
+
+
+    //以下输出招生信息
+
+
+    int count = 1;
+
+    while((fscanf(fpstudent, "%d %s %s %d", &(ps1->MajorNumber), ps1->name, ps1->province, &(ps1->score)))!=EOF)
+    {
+        ps1->number = count;
+        count ++;
+        //printf("%d %s %s %d %d\n", ps1->MajorNumber, ps1->name, ps1->province, ps1->score, ps1->number);
+        ps1->next = (struct student*)malloc(sizeof(struct student));
+        ps1 = ps1->next;
+    }
+
+    ps2 = ps1;
+    ps1 = shead;//初始化
+
+
+    for(int h = 1; h < k; h++)
+    {
+        ps1 = shead;
+        for(int y = 1; y < count; y++)
+        {
+            if(ps1->MajorNumber == h)
+            {
+                ps1->up = pm1;
+            }
+
+            ps1 = ps1 ->next;
+
+        }
+        pm1 = pm1->right;
+    }
+    p1 = head;
+    pm1 = mhead;
+    ps1 = shead;
+    //输出测试.成功
+    /*do{
+        printf("%s %s\n", ps1->up->name, ps1->name);
+        ps1 = ps1->next;
+    }while(ps1 != ps2);
+    ps1 = shead;*/
+
+    fclose(fpSchool);
+    fclose(fpMajor);
+    fclose(fpstudent);
+
+    printf("读取数据成功.\n\n");
+}
